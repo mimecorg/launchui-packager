@@ -92,6 +92,22 @@ function packager( opts, callback ) {
     extract( lauchuiPath, { dir: dirPath }, error => {
       if ( error != null )
         return callback( error, null );
+      renameExecutable();
+    } );
+  }
+
+  function renameExecutable() {
+    let oldPath, newPath;
+    if ( platform == 'win32' ) {
+      oldPath = path.join( dirPath, 'launchui.exe' );
+      newPath = path.join( dirPath, name + '.exe' );
+    } else {
+      oldPath = path.join( dirPath, 'launchui' );
+      newPath = path.join( dirPath, name );
+    }
+    fs.rename( oldPath, newPath, error => {
+      if ( error != null )
+        return callback( error, null );
       copyEntryScript();
     } );
   }
