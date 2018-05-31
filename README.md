@@ -2,6 +2,9 @@
 
 Package applications using [LaunchUI](https://github.com/mimecorg/launchui) for Windows, Linux and OS X.
 
+[![NPM module](https://img.shields.io/npm/v/launchui-packager.svg)](https://npmjs.org/package/launchui-packager)
+[![MIT License](https://img.shields.io/github/license/mimecorg/launchui-packager.svg)](https://github.com/mimecorg/launchui-packager/blob/master/LICENSE)
+
 ## Installation
 
 Install LaunchUI Packager locally to use it in your build scripts:
