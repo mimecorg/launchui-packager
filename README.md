@@ -4,7 +4,7 @@ Package applications using [LaunchUI](https://github.com/mimecorg/launchui) for 
 
 ## API
 
-LaunchUI Packager provides an API for creating binary packages for applications using LauchUI.
+LaunchUI Packager provides an API for creating binary packages for applications using LaunchUI.
 
 ```js
 const packager = require( 'launchui-packager' );
@@ -34,7 +34,7 @@ The `packager()` function supports the following options:
 - `arch`: The architecture of the package. The default value is `process.arch`.
 - `overwrite`: If set to `true`, an already existing output directory and/or ZIP package will be replaced. The default value is `false`.
 - `pack`: If set to `"zip"`, the output directory is packed into a ZIP package. By default, the output directory is not packed.
-- `launchuiOpts`: Additional options passed to `launchui.download()`. You can specify the LauchUI version and cache folder. Refer to the [LaunchUI API](https://github.com/mimecorg/launchui#api) for more information.
+- `launchuiOpts`: Additional options passed to `launchui.download()`. You can specify the LaunchUI version and cache folder. Refer to the [LaunchUI API](https://github.com/mimecorg/launchui#api) for more information.
 
 The name of the output directory is `${name}-v${version}-${platform}-${arch}`, for example `MyApp-v1.0.0-win32-ia32`. The name of the ZIP package is the same, with the `.zip` extension.
 
