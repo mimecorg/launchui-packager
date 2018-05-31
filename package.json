@@ -1,0 +1,30 @@
+{
+  "name": "launchui-packager",
+  "version": "0.1.0",
+  "description": "Package applications using LaunchUI for Windows, Linux and OS X",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mimecorg/launchui-packager.git"
+  },
+  "keywords": [
+    "node",
+    "libui",
+    "packager",
+    "desktop"
+  ],
+  "author": "Michał Męciński",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mimecorg/launchui-packager/issues"
+  },
+  "homepage": "https://github.com/mimecorg/launchui-packager",
+  "dependencies": {
+    "archiver": "^2.1.1",
+    "extract-zip": "^1.6.7",
+    "launchui": "^0.1.0",
+    "rimraf": "^2.6.2"
+  },
+  "devDependencies": {}
+}
