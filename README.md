@@ -37,10 +37,10 @@ The `packager()` function supports the following options:
 - `name`: Name of the application to package.
 - `version`: Version of the application to package.
 - `entry`: Path of the entry script of the application. It will be copied to `app/main.js` inside the package.
-- `out`: Path of the output directory where the package is created. It must exist prior to calling `packager()`.
 
 ### Optional
 
+- `out`: Path of the output directory where the package is created. The default value is the current directory.
 - `platform`: The platform of the package. The default value is `process.platform`.
 - `arch`: The architecture of the package. The default value is `process.arch`.
 - `overwrite`: If set to `true`, an already existing output directory and/or ZIP package will be replaced. The default value is `false`.

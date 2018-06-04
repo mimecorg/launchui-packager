@@ -5,13 +5,13 @@ const launchui = require( 'launchui' );
 const extract = require( 'extract-zip' );
 const archiver = require( 'archiver' );
 const rimraf = require( 'rimraf' );
+const mkdirp = require( 'mkdirp' );
 const rcedit = require( 'rcedit' );
 
 function packager( opts, callback ) {
   const name = opts.name;
   const version = opts.version;
   const entry = opts.entry;
-  const out = opts.out;
 
   if ( typeof name !== 'string' || name === '' )
     throw new TypeError( 'Invalid or missing option: name' );
@@ -19,14 +19,8 @@ function packager( opts, callback ) {
     throw new TypeError( 'Invalid or missing option: version' );
   if ( typeof entry !== 'string' || entry === '' )
     throw new TypeError( 'Invalid or missing option: entry' );
-  if ( typeof out !== 'string' || out === '' )
-    throw new TypeError( 'Invalid or missing option: out' );
 
-  const targetPath = path.resolve( out );
-
-  if ( !fs.existsSync( targetPath ) )
-    throw new Error( 'Output directory does not exist' );
-
+  const out = opts.out || '.';
   const launchuiOpts = opts.launchuiOpts || {};
   const platform = opts.platform || process.platform;
   const arch = opts.arch || process.arch;
@@ -36,6 +30,8 @@ function packager( opts, callback ) {
   const copyright = opts.copyright || null;
   const icon = opts.icon || null;
   const license = opts.license || null;
+
+  const targetPath = path.resolve( out );
 
   if ( pack !== 'zip' && pack !== false )
     throw new TypeError( 'Invalid value of option: pack' );
@@ -79,7 +75,7 @@ function packager( opts, callback ) {
 
   function makePackageDir( lauchuiPath ) {
     if ( !fs.existsSync( dirPath ) ) {
-      fs.mkdir( dirPath, error => {
+      mkdirp( dirPath, error => {
         if ( error != null )
           return callback( error, null );
         extractPackage( lauchuiPath );
