@@ -62,7 +62,7 @@ The LaunchUI executable is automatically renamed to the application name, e.g. `
 At the moment LaunchUI is in an early stage of development. Currently only Windows is supported. Here's the high level roadmap for future versions:
 
 - [x] Integration with rcedit
-- [ ] Options for copying additional files
+- [x] Options for copying additional files
 - [ ] Command line support
 - [ ] Add Linux support
 - [ ] Add OS X support
