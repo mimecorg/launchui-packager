@@ -7,6 +7,7 @@ const archiver = require( 'archiver' );
 const rimraf = require( 'rimraf' );
 const mkdirp = require( 'mkdirp' );
 const rcedit = require( 'rcedit' );
+const glob = require( 'glob' );
 
 function packager( opts, callback ) {
   const name = opts.name;
@@ -30,6 +31,8 @@ function packager( opts, callback ) {
   const copyright = opts.copyright || null;
   const icon = opts.icon || null;
   const license = opts.license || null;
+  const dir = opts.dir || null;
+  const files = opts.files || '**/*';
 
   const targetPath = path.resolve( out );
 
@@ -136,20 +139,71 @@ function packager( opts, callback ) {
     fs.copyFile( entry, destPath, error => {
       if ( error != null )
         return callback( error, null );
-      if ( license != null )
-        copyLicense();
-      else
-        finalize();
+      copyLicense();
     } );
   }
 
   function copyLicense() {
-    const destPath = path.join( dirPath, 'LICENSE' );
-    fs.copyFile( license, destPath, error => {
-      if ( error != null )
-        return callback( error, null );
+    if ( license != null ) {
+      const destPath = path.join( dirPath, 'LICENSE' );
+      fs.copyFile( license, destPath, error => {
+        if ( error != null )
+          return callback( error, null );
+        copyDirectory();
+      } );
+    } else {
+      copyDirectory();
+    }
+  }
+
+  function copyDirectory() {
+    if ( dir != null ) {
+      const srcDir = path.resolve( dir );
+      const filesArray = Array.isArray( files ) ? files : [ files ];
+
+      findFiles( 0 );
+
+      function findFiles( fileIndex ) {
+        if ( fileIndex < filesArray.length ) {
+          glob( filesArray[ fileIndex ], { cwd: srcDir, nodir: true }, ( error, matches ) => {
+            if ( error != null )
+              return callback( error, null );
+            processFile( matches, 0, fileIndex );
+          } );
+        } else {
+          finalize();
+        }
+      }
+
+      function processFile( matches, matchIndex, fileIndex ) {
+        if ( matchIndex < matches.length ) {
+          const srcPath = path.join( srcDir, matches[ matchIndex ] );
+          const destPath = path.join( dirPath, 'app/' + matches[ matchIndex ] );
+          const destDir = path.dirname( destPath );
+          if ( fs.existsSync( destDir ) ) {
+            copyFile( srcPath, destPath, matches, matchIndex, fileIndex );
+          } else {
+            mkdirp( destDir, error => {
+              if ( error != null )
+                return callback( error, null );
+              copyFile( srcPath, destPath, matches, matchIndex, fileIndex );
+            } );
+          }
+        } else {
+          findFiles( fileIndex + 1 );
+        }
+      }
+
+      function copyFile( srcPath, destPath, matches, matchIndex, fileIndex ) {
+        fs.copyFile( srcPath, destPath, error => {
+          if ( error != null )
+            return callback( error, null );
+          processFile( matches, matchIndex + 1, fileIndex );
+        } );
+      }
+    } else {
       finalize();
-    } );
+    }
   }
 
   function finalize() {

@@ -26,6 +26,7 @@
   "dependencies": {
     "archiver": "^2.1.1",
     "extract-zip": "^1.6.7",
+    "glob": "^7.1.2",
     "launchui": "^0.1.0",
     "mkdirp": "^0.5.1",
     "rcedit": "^1.1.0",
