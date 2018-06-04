@@ -49,6 +49,7 @@ The `packager()` function supports the following options:
 - `company`: Company name embedded in the executable.
 - `copyright`: Copyright embedded in the executable.
 - `icon`: Path of the icon embedded in the executable. It must have the `.ico` extension.
+- `license`: Path of the license file to include in the package.
 
 The name of the output directory is `${name}-v${version}-${platform}-${arch}`, for example `MyApp-v1.0.0-win32-ia32`. The name of the ZIP package is the same, with the `.zip` extension.
 

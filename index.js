@@ -35,6 +35,7 @@ function packager( opts, callback ) {
   const company = opts.company || null;
   const copyright = opts.copyright || null;
   const icon = opts.icon || null;
+  const license = opts.license || null;
 
   if ( pack !== 'zip' && pack !== false )
     throw new TypeError( 'Invalid value of option: pack' );
@@ -55,10 +56,7 @@ function packager( opts, callback ) {
 
     if ( fs.existsSync( dirPath ) ) {
       console.log( 'Output directory already exists: ' + dirName );
-      if ( pack )
-        return packZip();
-      else
-        return callback( null, dirPath );
+      finalize();
     }
   }
 
@@ -142,11 +140,27 @@ function packager( opts, callback ) {
     fs.copyFile( entry, destPath, error => {
       if ( error != null )
         return callback( error, null );
-      if ( pack )
-        packZip();
+      if ( license != null )
+        copyLicense();
       else
-        callback( null, dirPath );
+        finalize();
     } );
+  }
+
+  function copyLicense() {
+    const destPath = path.join( dirPath, 'LICENSE' );
+    fs.copyFile( license, destPath, error => {
+      if ( error != null )
+        return callback( error, null );
+      finalize();
+    } );
+  }
+
+  function finalize() {
+    if ( pack )
+      packZip();
+    else
+      callback( null, dirPath );
   }
 
   function packZip() {
