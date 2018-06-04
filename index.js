@@ -5,6 +5,7 @@ const launchui = require( 'launchui' );
 const extract = require( 'extract-zip' );
 const archiver = require( 'archiver' );
 const rimraf = require( 'rimraf' );
+const rcedit = require( 'rcedit' );
 
 function packager( opts, callback ) {
   const name = opts.name;
@@ -31,6 +32,9 @@ function packager( opts, callback ) {
   const arch = opts.arch || process.arch;
   const overwrite = !!opts.overwrite;
   const pack = opts.pack || false;
+  const company = opts.company || null;
+  const copyright = opts.copyright || null;
+  const icon = opts.icon || null;
 
   if ( pack !== 'zip' && pack !== false )
     throw new TypeError( 'Invalid value of option: pack' );
@@ -106,6 +110,27 @@ function packager( opts, callback ) {
       newPath = path.join( dirPath, name );
     }
     fs.rename( oldPath, newPath, error => {
+      if ( error != null )
+        return callback( error, null );
+      if ( platform == 'win32' )
+        callRcedit();
+      else
+        copyEntryScript();
+    } );
+  }
+
+  function callRcedit() {
+    const exePath = path.join( dirPath, name + '.exe' );
+    const versionString = {
+      'FileDescription': name,
+      'OriginalFilename': name + '.exe',
+      'ProductName': name
+    };
+    if ( company != null )
+      versionString[ 'CompanyName' ] = company;
+    if ( copyright != null )
+      versionString[ 'LegalCopyright' ] = copyright;
+    rcedit( exePath, { 'version-string': versionString, 'file-version': version, 'product-version': version, icon }, error => {
       if ( error != null )
         return callback( error, null );
       copyEntryScript();

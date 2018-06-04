@@ -46,16 +46,19 @@ The `packager()` function supports the following options:
 - `overwrite`: If set to `true`, an already existing output directory and/or ZIP package will be replaced. The default value is `false`.
 - `pack`: If set to `"zip"`, the output directory is packed into a ZIP package. By default, the output directory is not packed.
 - `launchuiOpts`: Additional options passed to `launchui.download()`. You can specify the LaunchUI version and cache location. Refer to the [LaunchUI API](https://github.com/mimecorg/launchui#api) for more information.
+- `company`: Company name embedded in the executable.
+- `copyright`: Copyright embedded in the executable.
+- `icon`: Path of the icon embedded in the executable. It must have the `.ico` extension.
 
 The name of the output directory is `${name}-v${version}-${platform}-${arch}`, for example `MyApp-v1.0.0-win32-ia32`. The name of the ZIP package is the same, with the `.zip` extension.
 
-The LaunchUI executable is automatically renamed to the application name, e.g. `MyApp.exe`.
+The LaunchUI executable is automatically renamed to the application name, e.g. `MyApp.exe`. The default resources embedded in the executable, including version information and icon, are replaced using [rcedit](https://github.com/electron/rcedit).
 
 ## Development status
 
 At the moment LaunchUI is in an early stage of development. Currently only Windows is supported. Here's the high level roadmap for future versions:
 
-- [ ] Integration with rcedit
+- [x] Integration with rcedit
 - [ ] Options for copying additional files
 - [ ] Command line support
 - [ ] Add Linux support
