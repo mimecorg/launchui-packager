@@ -10,9 +10,7 @@ const rcedit = require( 'rcedit' );
 const glob = require( 'glob' );
 
 function packager( opts, callback ) {
-  const name = opts.name;
-  const version = opts.version;
-  const entry = opts.entry;
+  const { name, version, entry } = opts;
 
   if ( typeof name !== 'string' || name === '' )
     throw new TypeError( 'Invalid or missing option: name' );
@@ -21,18 +19,20 @@ function packager( opts, callback ) {
   if ( typeof entry !== 'string' || entry === '' )
     throw new TypeError( 'Invalid or missing option: entry' );
 
-  const out = opts.out || '.';
-  const launchuiOpts = opts.launchuiOpts || {};
-  const platform = opts.platform || process.platform;
-  const arch = opts.arch || process.arch;
-  const overwrite = !!opts.overwrite;
-  const pack = opts.pack || false;
-  const company = opts.company || null;
-  const copyright = opts.copyright || null;
-  const icon = opts.icon || null;
-  const license = opts.license || null;
-  const dir = opts.dir || null;
-  const files = opts.files || '**/*';
+  const {
+    out = '.',
+    launchuiOpts = {},
+    platform = process.platform,
+    arch = process.arch,
+    overwrite = false,
+    pack = false,
+    company,
+    copyright,
+    icon,
+    license,
+    dir,
+    files = '**'
+  } = opts;
 
   const targetPath = path.resolve( out );
 
