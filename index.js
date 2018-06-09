@@ -8,6 +8,7 @@ const rimraf = require( 'rimraf' );
 const mkdirp = require( 'mkdirp' );
 const rcedit = require( 'rcedit' );
 const glob = require( 'glob' );
+const plist = require( 'plist' );
 
 function packager( opts, callback ) {
   const { name, version, entry } = opts;
@@ -28,6 +29,8 @@ function packager( opts, callback ) {
     pack = false,
     company,
     copyright,
+    identifier,
+    category,
     icon,
     license,
     dir,
@@ -46,6 +49,8 @@ function packager( opts, callback ) {
 
   const dirPath = path.join( targetPath, dirName );
   const zipPath = path.join( targetPath, zipName );
+
+  let appPath;
 
   if ( !overwrite ) {
     if ( pack && fs.existsSync( zipPath ) ) {
@@ -93,7 +98,44 @@ function packager( opts, callback ) {
     extract( lauchuiPath, { dir: dirPath }, error => {
       if ( error != null )
         return callback( error, null );
-      renameExecutable();
+      if ( platform == 'darwin' )
+        renameApplication();
+      else
+        renameExecutable();
+    } );
+  }
+
+  function renameApplication() {
+    const oldPath = path.join( dirPath, 'launchui.app' );
+    const newPath = path.join( dirPath, name + '.app' );
+    fs.rename( oldPath, newPath, error => {
+      if ( error != null )
+        return callback( error, null );
+      updatePlist();
+    } );
+  }
+
+  function updatePlist() {
+    const plistPath = path.join( dirPath, name + '.app/Contents/Info.plist' );
+    fs.readFile( plistPath, 'utf8', ( error, data ) => {
+      if ( error != null )
+        return callback( error, null );
+      const metadata = plist.parse( data );
+      metadata.CFBundleName = name;
+      metadata.CFBundleExecutable = name;
+      metadata.CFBundleIdentifier = identifier != null ? identifier : 'org.mimec.launchui.' + name;
+      metadata.CFBundleVersion = version;
+      metadata.CFBundleShortVersionString = version;
+      if ( copyright != null )
+        metadata.NSHumanReadableCopyright = copyright;
+      if ( category != null )
+        metadata.LSApplicationCategoryType = category;
+      const newData = plist.build( metadata );
+      fs.writeFile( plistPath, newData, 'utf8', error => {
+        if ( error != null )
+          return callback( error, null );
+        renameExecutable();
+      } );
     } );
   }
 
@@ -102,6 +144,9 @@ function packager( opts, callback ) {
     if ( platform == 'win32' ) {
       oldPath = path.join( dirPath, 'launchui.exe' );
       newPath = path.join( dirPath, name + '.exe' );
+    } else if ( platform == 'darwin' ) {
+      oldPath = path.join( dirPath, name + '.app/Contents/MacOS/launchui' );
+      newPath = path.join( dirPath, name + '.app/Contents/MacOS/' + name );
     } else {
       oldPath = path.join( dirPath, 'launchui' );
       newPath = path.join( dirPath, name );
@@ -111,6 +156,8 @@ function packager( opts, callback ) {
         return callback( error, null );
       if ( platform == 'win32' )
         callRcedit();
+      else if ( platform == 'darwin' )
+        copyIcns();
       else
         copyEntryScript();
     } );
@@ -134,8 +181,25 @@ function packager( opts, callback ) {
     } );
   }
 
+  function copyIcns() {
+    if ( icon != null ) {
+      const destPath = path.join( dirPath, name + '.app/Contents/Resources/launchui.icns' );
+      fs.copyFile( icon, destPath, error => {
+        if ( error != null )
+          return callback( error, null );
+        copyEntryScript();
+      } );
+    } else {
+      copyEntryScript();
+    }
+  }
+
   function copyEntryScript() {
-    const destPath = path.join( dirPath, 'app/main.js' );
+    if ( platform == 'darwin' )
+      appPath = path.join( dirPath, name + '.app/Contents/Resources/app' );
+    else
+      appPath = path.join( dirPath, 'app' );
+    const destPath = path.join( appPath, 'main.js' );
     fs.copyFile( entry, destPath, error => {
       if ( error != null )
         return callback( error, null );
@@ -178,7 +242,7 @@ function packager( opts, callback ) {
       function processFile( matches, matchIndex, fileIndex ) {
         if ( matchIndex < matches.length ) {
           const srcPath = path.join( srcDir, matches[ matchIndex ] );
-          const destPath = path.join( dirPath, 'app/' + matches[ matchIndex ] );
+          const destPath = path.join( appPath, matches[ matchIndex ] );
           const destDir = path.dirname( destPath );
           if ( fs.existsSync( destDir ) ) {
             copyFile( srcPath, destPath, matches, matchIndex, fileIndex );
