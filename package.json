@@ -6,6 +6,9 @@
   "files": [
     "index.js"
   ],
+  "bin": {
+    "launchui-packager": "cli.js"
+  },
   "scripts": {},
   "repository": {
     "type": "git",
@@ -25,6 +28,7 @@
   "homepage": "https://github.com/mimecorg/launchui-packager",
   "dependencies": {
     "archiver": "^2.1.1",
+    "commander": "^2.15.1",
     "extract-zip": "^1.6.7",
     "glob": "^7.1.2",
     "launchui": "^0.1.3",
