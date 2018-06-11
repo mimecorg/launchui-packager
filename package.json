@@ -4,6 +4,7 @@
   "description": "Package applications using LaunchUI for Windows, Linux and OS X",
   "main": "index.js",
   "files": [
+    "cli.js",
     "index.js"
   ],
   "bin": {
