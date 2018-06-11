@@ -54,13 +54,13 @@ function packager( opts, callback ) {
 
   if ( !overwrite ) {
     if ( pack && fs.existsSync( zipPath ) ) {
-        console.log( 'Output package already exists: ' + zipName );
-        return callback( null, zipPath );
+      console.log( 'Output package already exists: ' + zipName );
+      return callback( null, zipPath );
     }
 
     if ( fs.existsSync( dirPath ) ) {
       console.log( 'Output directory already exists: ' + dirName );
-      finalize();
+      return finalize();
     }
   }
 
