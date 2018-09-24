@@ -11,6 +11,8 @@ LaunchUI wraps Node.js with a small executable which automatically runs the appl
 
 LaunchUI Packager provides a command line utility and an API for creating packages based on LaunchUI for Windows, Linux and OS X.
 
+You can also use [LaunchUI Packager GUI](https://github.com/mimecorg/launchui-packager-gui), a desktop application which simplifies creating LaunchUI packages without using custom scripts.
+
 ## Installation
 
 Install LaunchUI Packager locally to use it in your build scripts:
